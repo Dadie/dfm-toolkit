@@ -1,0 +1,1 @@
+object Basic: TForm1	StrASCIICr = 'aouss!'end

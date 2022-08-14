@@ -1,0 +1,4 @@
+object BasicObj: TForm1
+  object TMyObject
+  end
+end

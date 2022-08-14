@@ -1,1 +1,14 @@
 build/**
+.cache/**
+.build/**
+.cmake/**
+build-*/**
+.cache-*/**
+.build-*/**
+.cmake-*/**
+compile_commands.json
+todo.md
+*.bkp.*
+*.wip.*
+no.commit.*
+nc.*

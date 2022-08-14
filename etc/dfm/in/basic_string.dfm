@@ -1,0 +1,19 @@
+object BasicString: TForm1
+  Str0 = ''
+  Str1 = '123'
+  Str2 = 'ABC'
+  Str3 = 'öäü'
+  Str4 = #50
+  Str5 = #$50
+  Str6 = #50#50#50
+  Str7 = #$50#$50#$50
+  Str8 = ''#$0D''
+  Str9 = ''#$0D
+  StrA = #$0D''
+  StrB = ''#$0D'' + 'ABC'
+  StrC = 'ABC'+'DEF'+''+''#$0D
+  StrD = ''''
+  StrE = ''''+''''
+  StrF = ''''+''''#$0D
+  Str10 = #$0D''''+''''
+end

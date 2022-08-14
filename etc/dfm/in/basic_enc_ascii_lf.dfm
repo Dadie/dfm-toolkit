@@ -1,0 +1,3 @@
+object Basic: TForm1
+	StrASCIILf = 'aouss!'
+end

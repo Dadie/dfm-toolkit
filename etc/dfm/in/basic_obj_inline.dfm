@@ -1,0 +1,4 @@
+inline Basic: TForm1
+inline MyObj: TForm1
+end
+end
