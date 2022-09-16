@@ -1,7 +1,9 @@
 # DFM Toolkit
+![Logo](etc/logo_32_32.png)
+
 > The DFM Toolkit is a collection of tools to process DFM files produced by Embarcadero's RAD Studio.
 
-The DFM Toolkit constists of
+The DFM Toolkit consists of
 - DFM Image Export
   > A Tool that exports image data from a given DFM File
 - DFM Formatter
@@ -11,17 +13,17 @@ The DFM Toolkit constists of
 - libdfm
   > The core library to parse and process DFM files
 
-Because of a lack of any sort of documentation or specification the syntax and semantic is mostly guessed based on examples found online. A DFM file is tokenized using the the automata described (here)[./etc/lexer.md] and the tokens are passed using the context free gamatic described (here)[./etc/gramma.md].
+Because of a lack of any sort of documentation or specification the syntax and semantic is mostly guessed based on examples found online. A DFM file is tokenized using the the automata described (here)[./etc/lexer.md] and the tokens are passed using the context-free grammar described (here)[./etc/grammar.md].
 
 ## Goal
 
-Goal of this projects is to provide delphi developers easy to use tools to work with .dfm files in a way currently not or not easily possible with tools provided by Embarcadero.
+Goal of this projects is to provide Delphi developers easy to use tools to work with .dfm files in a way currently not or not easily possible with tools provided by Embarcadero.
 
 This includes but is not limited to:
 - Formatting .dfm files
 - Extracting data from .dfm files (e.g. images, configurations)
 - Search in .dfm files (e.g. for images, configurations, certain values/types)
-- Editing .dfm files (e.g. removing attributs, replacing images)
+- Editing .dfm files (e.g. removing attributes, replacing images)
 
 ## Compiling
 **Note: Because of a dependency to the `::iconv()` function a build on/for Windows might not be easy** 

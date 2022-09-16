@@ -1,6 +1,6 @@
-# DFM Gramma
+# DFM Grammar
 
-The following context free gramatic was deducted using .dfm files found on github, a basic knowledge of the delphi programming language and common sense. Matching has to be done case-insensitiv.
+The following context-free grammar was deducted using .dfm files found on github, a basic knowledge of Delphi and common sense. Matching has to be done case-insensitiv.
 
 ```
 DFM := <WS>* <OBJ> <WS>*
