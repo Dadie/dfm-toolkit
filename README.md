@@ -1,6 +1,4 @@
-# DFM Toolkit
-![Logo](etc/logo_32_32.png)
-
+# ![Logo](etc/logo_32_32.png) DFM Toolkit 
 > The DFM Toolkit is a collection of tools to process DFM files produced by Embarcadero's RAD Studio.
 
 The DFM Toolkit consists of
@@ -13,7 +11,7 @@ The DFM Toolkit consists of
 - libdfm
   > The core library to parse and process DFM files
 
-Because of a lack of any sort of documentation or specification the syntax and semantic is mostly guessed based on examples found online. A DFM file is tokenized using the the automata described (here)[./etc/lexer.md] and the tokens are passed using the context-free grammar described (here)[./etc/grammar.md].
+Because of a lack of any sort of documentation or specification the syntax and semantic is mostly guessed based on examples found online. A DFM file is tokenized using the the automata described (here)[./etc/lexer.md] and the tokens are passed using the context-free grammar described [here](./etc/grammar.md).
 
 ## Goal
 
@@ -51,7 +49,7 @@ cmake --build .
 
 The DFM Toolkit requires a `C++` compiler supporting at least `C++20` e.g. `clang 11` and uses `CMake`.
 
-While the `libdfm` as no further dependencies, the applications depend also on (`docopt.cpp`)[https://github.com/docopt/docopt.cpp].
+While the `libdfm` as no further dependencies, the applications depend also on [`docopt.cpp`](https://github.com/docopt/docopt.cpp).
 
 For the usage of each application in the toolkit see the `USAGE` string in the `$app.main.cpp` or call the application with the `--help` argument.
 
@@ -87,4 +85,4 @@ Unless stated otherwise any contribution is assumed to be under the same license
 
 ## License
 
-See (LICENSE)[./LICENSE]
+See [LICENSE](./LICENSE)
