@@ -11,7 +11,7 @@ The DFM Toolkit consists of
 - libdfm
   > The core library to parse and process DFM files
 
-Because of a lack of any sort of documentation or specification the syntax and semantic is mostly guessed based on examples found online. A DFM file is tokenized using the the automata described (here)[./etc/lexer.md] and the tokens are passed using the context-free grammar described [here](./etc/grammar.md).
+Because of a lack of any sort of documentation or specification the syntax and semantic is mostly guessed based on examples found online. A DFM file is tokenized using the the automata described [here](./etc/lexer.md) and the tokens are passed using the context-free grammar described [here](./etc/grammar.md).
 
 ## Goal
 
