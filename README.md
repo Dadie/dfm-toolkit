@@ -49,7 +49,7 @@ cmake --build .
 
 The DFM Toolkit requires a `C++` compiler supporting at least `C++20` e.g. `clang 11` and uses `CMake`.
 
-While the `libdfm` as no further dependencies, the applications depend also on [`docopt.cpp`](https://github.com/docopt/docopt.cpp).
+While the `libdfm` has no further dependencies, the applications depend also on [`docopt.cpp`](https://github.com/docopt/docopt.cpp).
 
 For the usage of each application in the toolkit see the `USAGE` string in the `$app.main.cpp` or call the application with the `--help` argument.
 
