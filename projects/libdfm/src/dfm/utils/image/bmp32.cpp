@@ -40,6 +40,7 @@ size_t dfm::utils::image::bmp::load(const uint8_t* p)
     {
         const std::vector< dfm::utils::image::bitmap_dib_type > supported_dibs {
             dfm::utils::image::bitmap_dib_type::BITMAPINFOHEADER,
+            dfm::utils::image::bitmap_dib_type::BITMAPCOREHEADER,
         };
         return std::find(supported_dibs.begin(), supported_dibs.end(), dib) != supported_dibs.end();
     };
@@ -60,6 +61,42 @@ size_t dfm::utils::image::bmp::load(const uint8_t* p)
     size_t s = 0;
     switch (analysis.dib)
     {
+        case dfm::utils::image::bitmap_dib_type::BITMAPCOREHEADER:
+            switch (analysis.bits_per_pixel)
+            {
+                case 1:
+                {
+                    bmp1< bitmap_core_header > bmp_;
+                    s += bmp_.load((p == nullptr ? p : (p + s)));
+                    __bmp = bmp_;
+                }
+                break;
+                case 4:
+                {
+                    bmp4< bitmap_core_header > bmp_;
+                    s += bmp_.load((p == nullptr ? p : (p + s)));
+                    __bmp = bmp_;
+                }
+                break;
+                case 8:
+                {
+                    bmp8< bitmap_core_header > bmp_;
+                    s += bmp_.load((p == nullptr ? p : (p + s)));
+                    __bmp = bmp_;
+                }
+                break;
+                case 24:
+                {
+                    bmp24< bitmap_core_header > bmp_;
+                    s += bmp_.load((p == nullptr ? p : (p + s)));
+                    __bmp = bmp_;
+                }
+                break;
+                default:
+                    throw std::runtime_error(
+                        "Unsupported bits per pixel (" + std::to_string(analysis.bits_per_pixel) + ") in bitmap");
+            }
+            break;
         case dfm::utils::image::bitmap_dib_type::BITMAPINFOHEADER:
             switch (analysis.bits_per_pixel)
             {
@@ -126,6 +163,7 @@ size_t dfm::utils::image::bmp::load(const uint8_t* p)
 
 size_t dfm::utils::image::bmp::save(uint8_t* p) const
 {
+    // BITMAPINFOHEADER
     if (has< bmp32< bitmap_info_header > >())
     {
         return get< bmp32< bitmap_info_header > >().save(p);
@@ -159,6 +197,27 @@ size_t dfm::utils::image::bmp::save(uint8_t* p) const
     if (has< bmp1< bitmap_info_header > >())
     {
         return get< bmp1< bitmap_info_header > >().save(p);
+    }
+
+    // BITMAPCOREHEADER
+    if (has< bmp24< bitmap_core_header > >())
+    {
+        return get< bmp24< bitmap_core_header > >().save(p);
+    }
+
+    if (has< bmp8< bitmap_core_header > >())
+    {
+        return get< bmp8< bitmap_core_header > >().save(p);
+    }
+
+    if (has< bmp4< bitmap_core_header > >())
+    {
+        return get< bmp4< bitmap_core_header > >().save(p);
+    }
+
+    if (has< bmp1< bitmap_core_header > >())
+    {
+        return get< bmp1< bitmap_core_header > >().save(p);
     }
 
     assert(false);
@@ -426,6 +485,47 @@ void dfm::utils::image::bitmap_file_header::pp(std::ostream& out) const
     out << "data_offset: " << data_offset << std::endl;
 }
 
+size_t dfm::utils::image::bitmap_core_header::load(const uint8_t* p)
+{
+    size_t s = 0;
+    size = dfm::utils::bits::p2u32((p == nullptr ? p : (p + s)), s);
+    width = dfm::utils::bits::p2u16((p == nullptr ? p : (p + s)), s);
+    height = dfm::utils::bits::p2u16((p == nullptr ? p : (p + s)), s);
+    color_planes = dfm::utils::bits::p2u16((p == nullptr ? p : (p + s)), s);
+    bits_per_pixel = dfm::utils::bits::p2u16((p == nullptr ? p : (p + s)), s);
+    assert(s == 12);
+    // See https://learn.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-bitmapcoreheader
+    assert(color_planes == 1);
+    assert(bits_per_pixel == 1 || bits_per_pixel == 4 || bits_per_pixel == 8 || bits_per_pixel == 24);
+    return s;
+}
+
+size_t dfm::utils::image::bitmap_core_header::save(uint8_t* p) const
+{
+    // See https://learn.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-bitmapcoreheader
+    assert(color_planes == 1);
+    assert(bits_per_pixel == 1 || bits_per_pixel == 4 || bits_per_pixel == 8 || bits_per_pixel == 24);
+
+    size_t s = 0;
+    {
+        s += dfm::utils::bits::u32w2p(size, (p == nullptr ? p : (p + s)));
+        s += dfm::utils::bits::u16w2p(width, (p == nullptr ? p : (p + s)));
+        s += dfm::utils::bits::u16w2p(height, (p == nullptr ? p : (p + s)));
+        s += dfm::utils::bits::u16w2p(color_planes, (p == nullptr ? p : (p + s)));
+        s += dfm::utils::bits::u16w2p(bits_per_pixel, (p == nullptr ? p : (p + s)));
+    }
+    return s;
+}
+
+void dfm::utils::image::bitmap_core_header::pp(std::ostream& out) const
+{
+    out << "size: " << size << std::endl;
+    out << "width: " << width << std::endl;
+    out << "height: " << height << std::endl;
+    out << "color_planes: " << color_planes << std::endl;
+    out << "bits_per_pixel: " << bits_per_pixel << std::endl;
+}
+
 size_t dfm::utils::image::bitmap_info_header::load(const uint8_t* p)
 {
     size_t s = 0;
@@ -582,6 +682,43 @@ void dfm::utils::image::bitmap_v4_header::pp(std::ostream& out) const
     out << "r_gamma: " << r_gamma << std::endl;
     out << "g_gamma: " << g_gamma << std::endl;
     out << "b_gamma: " << b_gamma << std::endl;
+}
+
+dfm::utils::image::bitmap_v4_header& dfm::utils::image::bitmap_v4_header::operator=(
+    const dfm::utils::image::bitmap_core_header& h)
+{
+    size = 108;
+    width = h.width;
+    height = h.height;
+
+    color_planes = h.color_planes;
+    bits_per_pixel = h.bits_per_pixel;
+    compression = static_cast< uint32_t >(dfm::utils::image::bitmap_compression_methods::BI_BITFIELDS);
+    image_size = height * (((width * bits_per_pixel) / 32) + (((width * bits_per_pixel) % 32) > 0 ? 1 : 0));
+    h_resolution = h.width;
+    v_resolution = h.height;
+    num_of_colors = 0;
+    num_of_important_colors = 0;
+
+    r_bitmask = 0x00ff0000;
+    b_bitmask = 0x000000ff;
+    g_bitmask = 0x0000ff00;
+    a_bitmask = 0xff000000;
+
+    color_space[ 1 ] = 'W';
+    color_space[ 0 ] = 'i';
+    color_space[ 3 ] = 'n';
+    color_space[ 2 ] = ' ';
+
+    for (size_t i = 0; i < 36; ++i)
+    {
+        cie_xyz_triple[ i ] = 0;
+    }
+    r_gamma = 0;
+    g_gamma = 0;
+    b_gamma = 0;
+
+    return *this;
 }
 
 dfm::utils::image::bitmap_v4_header& dfm::utils::image::bitmap_v4_header::operator=(
@@ -825,8 +962,13 @@ dfm::utils::image::bitmap_analyse dfm::utils::image::analyse(const uint8_t* p)
         {
             case dfm::utils::image::bitmap_dib_type::BITMAPCOREHEADER:
             {
-                // CURRENTLY NOT SUPPORTED
-                assert(false);
+                dfm::utils::image::bitmap_core_header dib;
+                s += dib.load((p == nullptr ? p : (p + s)));
+                res.found_dib = true;
+                res.width = dib.width;
+                res.height = dib.height;
+                res.bits_per_pixel = dib.bits_per_pixel;
+                res.compression = dfm::utils::image::bitmap_compression_methods::BI_RGB;
             }
             break;
 

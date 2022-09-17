@@ -11,5 +11,5 @@
 
 bool SHOW_DEBUG()
 {
-    return true;
+    return false;
 }

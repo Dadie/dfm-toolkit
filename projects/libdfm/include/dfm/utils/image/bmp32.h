@@ -32,6 +32,20 @@ namespace dfm::utils::image
     };
     static_assert(sizeof(bitmap_file_header) == 14, "Bad Struct Size");
 
+    struct __attribute__((__packed__)) bitmap_core_header
+    {
+        uint32_t size {};
+        uint16_t width {};
+        uint16_t height {};
+        uint16_t color_planes {};
+        uint16_t bits_per_pixel {};
+
+        size_t load(const uint8_t* p);
+        size_t save(uint8_t* p) const;
+        void pp(std::ostream& out = std::cout) const;
+    };
+    static_assert(sizeof(bitmap_core_header) == 12, "Bad Struct Size");
+
     struct __attribute__((__packed__)) bitmap_info_header
     {
         uint32_t size {};
@@ -80,6 +94,7 @@ namespace dfm::utils::image
         size_t load(const uint8_t* p);
         size_t save(uint8_t* p) const;
         void pp(std::ostream& out = std::cout) const;
+        bitmap_v4_header& operator=(const bitmap_core_header&);
         bitmap_v4_header& operator=(const bitmap_info_header&);
     };
     static_assert(sizeof(bitmap_v4_header) == 108, "Bad Struct Size");
@@ -242,6 +257,10 @@ namespace dfm::utils::image
     template < typename DibHeaderType, typename PixelType, typename PixelArrayType >
     struct basic_bmp
     {
+        using dib_type = DibHeaderType;
+        using pixel_type = PixelType;
+        using pixel_array_type = PixelArrayType;
+
         bitmap_file_header file_header;
         DibHeaderType dib_header;
         // TODO: Extra bit masks
@@ -339,6 +358,15 @@ namespace dfm::utils::image
     template < typename DibHeaderType >
     struct bmp1 : public basic_bmp< DibHeaderType, b1_pixel, bmp1_pixel_array >
     {
+        template < typename DibType >
+        bmp1& operator=(const bmp1< DibType >& v)
+        {
+            this->file_header = v.file_header;
+            this->dib_header = v.dib_header;
+            this->color_table = v.color_table;
+            this->pixel_array = v.pixel_array;
+            return *this;
+        }
     };
 
     template < typename DibHeaderType >
@@ -369,6 +397,40 @@ namespace dfm::utils::image
     template < typename DibHeaderType >
     struct bmp32 : public basic_bmp< DibHeaderType, b32_pixel, bmp32_pixel_array >
     {
+        template < typename DibType >
+        bmp32& operator=(const bmp1< DibType >& v)
+        {
+            const auto clwhite = b32_pixel { .b = 0xff, .g = 0xff, .r = 0xff, .a = 0xff };
+            const auto clblack = b32_pixel { .b = 0x00, .g = 0x00, .r = 0x00, .a = 0x00 };
+            this->pixel_array.resize(v.dib_header.width, v.dib_header.height);
+            for (uint32_t x = 0; x < v.dib_header.width; ++x)
+            {
+                for (uint32_t y = 0; y < v.dib_header.height; ++y)
+                {
+                    if (v.pixel_array.get(x, y).value)
+                    {
+                        this->pixel_array.get(x, y) = clwhite;
+                    }
+                    else
+                    {
+                        this->pixel_array.get(x, y) = clblack;
+                    }
+                }
+            }
+
+            this->dib_header = v.dib_header;
+            this->dib_header.bits_per_pixel = 32;
+            this->dib_header.image_size = this->pixel_array.save(nullptr);
+
+            this->file_header.id[ 0 ] = 'B';
+            this->file_header.id[ 1 ] = 'M';
+            this->file_header.data_offset = this->file_header.save(nullptr) + this->dib_header.save(nullptr);
+
+            this->file_header.size = this->save(nullptr);
+
+            return *this;
+        }
+
         template < typename DibType >
         bmp32& operator=(const bmp2< DibType >& v)
         {
@@ -526,14 +588,20 @@ namespace dfm::utils::image
     struct bmp
     {
         private:
-        std::variant< std::monostate,    // Empty
+        std::variant< std::monostate, // Empty
+
             bmp32< bitmap_info_header >, // RGBA BMP
             bmp24< bitmap_info_header >, // RGB BMP
             bmp16< bitmap_info_header >, // RGB BMP
             bmp8< bitmap_info_header >,  // 256 Color BMP
             bmp4< bitmap_info_header >,  // 128 Color BMP
             bmp2< bitmap_info_header >,  // 16 Color BMP
-            bmp1< bitmap_info_header >   // B/W BMP
+            bmp1< bitmap_info_header >,  // B/W BMP
+
+            bmp24< bitmap_core_header >, // RGB BMP
+            bmp8< bitmap_core_header >,  // 256 Color BMP
+            bmp4< bitmap_core_header >,  // 128 Color BMP
+            bmp1< bitmap_core_header >   // B/W BMP
             >
             __bmp;
 
