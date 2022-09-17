@@ -397,177 +397,62 @@ namespace dfm::utils::image
     template < typename DibHeaderType >
     struct bmp32 : public basic_bmp< DibHeaderType, b32_pixel, bmp32_pixel_array >
     {
+        private:
+        template < typename BmpType >
+        b32_pixel get_pixel(const BmpType& v, const uint32_t x, const uint32_t y)
+        {
+            b32_pixel cl;
+            cl = v.pixel_array.get(x, y);
+            return cl;
+        }
+
         template < typename DibType >
-        bmp32& operator=(const bmp1< DibType >& v)
+        b32_pixel get_pixel(const bmp1< DibType >& v, const uint32_t x, const uint32_t y)
         {
             const auto clwhite = b32_pixel { .b = 0xff, .g = 0xff, .r = 0xff, .a = 0xff };
             const auto clblack = b32_pixel { .b = 0x00, .g = 0x00, .r = 0x00, .a = 0x00 };
-            this->pixel_array.resize(v.dib_header.width, v.dib_header.height);
-            for (uint32_t x = 0; x < v.dib_header.width; ++x)
+            if (v.pixel_array.get(x, y).value)
             {
-                for (uint32_t y = 0; y < v.dib_header.height; ++y)
-                {
-                    if (v.pixel_array.get(x, y).value)
-                    {
-                        this->pixel_array.get(x, y) = clwhite;
-                    }
-                    else
-                    {
-                        this->pixel_array.get(x, y) = clblack;
-                    }
-                }
+                return clwhite;
             }
-
-            this->dib_header = v.dib_header;
-            this->dib_header.bits_per_pixel = 32;
-            this->dib_header.image_size = this->pixel_array.save(nullptr);
-
-            this->file_header.id[ 0 ] = 'B';
-            this->file_header.id[ 1 ] = 'M';
-            this->file_header.data_offset = this->file_header.save(nullptr) + this->dib_header.save(nullptr);
-
-            this->file_header.size = this->save(nullptr);
-
-            return *this;
+            return clblack;
         }
 
         template < typename DibType >
-        bmp32& operator=(const bmp2< DibType >& v)
+        b32_pixel get_pixel(const bmp2< DibType >& v, const uint32_t x, const uint32_t y)
+        {
+            b32_pixel cl;
+            cl = v.color_table[ v.pixel_array.get(x, y).idx ];
+            return cl;
+        }
+
+        template < typename DibType >
+        b32_pixel get_pixel(const bmp4< DibType >& v, const uint32_t x, const uint32_t y)
+        {
+            b32_pixel cl;
+            cl = v.color_table[ v.pixel_array.get(x, y).idx ];
+            return cl;
+        }
+
+        template < typename DibType >
+        b32_pixel get_pixel(const bmp8< DibType >& v, const uint32_t x, const uint32_t y)
+        {
+            b32_pixel cl;
+            cl = v.color_table[ v.pixel_array.get(x, y).idx ];
+            return cl;
+        }
+
+        public:
+        template < typename BmpType >
+        bmp32& operator=(const BmpType& v)
         {
             this->pixel_array.resize(v.dib_header.width, v.dib_header.height);
             for (uint32_t x = 0; x < v.dib_header.width; ++x)
             {
                 for (uint32_t y = 0; y < v.dib_header.height; ++y)
                 {
-                    const auto& pixel = v.color_table[ v.pixel_array.get(x, y).idx ];
-                    this->pixel_array.get(x, y) = pixel;
-                }
-            }
-
-            this->dib_header = v.dib_header;
-            this->dib_header.bits_per_pixel = 32;
-            this->dib_header.image_size = this->pixel_array.save(nullptr);
-
-            this->file_header.id[ 0 ] = 'B';
-            this->file_header.id[ 1 ] = 'M';
-            this->file_header.data_offset = this->file_header.save(nullptr) + this->dib_header.save(nullptr);
-
-            this->file_header.size = this->save(nullptr);
-
-            return *this;
-        }
-
-        template < typename DibType >
-        bmp32& operator=(const bmp4< DibType >& v)
-        {
-            this->pixel_array.resize(v.dib_header.width, v.dib_header.height);
-            for (uint32_t x = 0; x < v.dib_header.width; ++x)
-            {
-                for (uint32_t y = 0; y < v.dib_header.height; ++y)
-                {
-                    const auto& pixel = v.color_table[ v.pixel_array.get(x, y).idx ];
-                    this->pixel_array.get(x, y) = pixel;
-                }
-            }
-
-            this->dib_header = v.dib_header;
-            this->dib_header.bits_per_pixel = 32;
-            this->dib_header.image_size = this->pixel_array.save(nullptr);
-
-            this->file_header.id[ 0 ] = 'B';
-            this->file_header.id[ 1 ] = 'M';
-            this->file_header.data_offset = this->file_header.save(nullptr) + this->dib_header.save(nullptr);
-
-            this->file_header.size = this->save(nullptr);
-
-            return *this;
-        }
-
-        template < typename DibType >
-        bmp32& operator=(const bmp8< DibType >& v)
-        {
-            this->pixel_array.resize(v.dib_header.width, v.dib_header.height);
-            for (uint32_t x = 0; x < v.dib_header.width; ++x)
-            {
-                for (uint32_t y = 0; y < v.dib_header.height; ++y)
-                {
-                    const auto& pixel = v.color_table[ v.pixel_array.get(x, y).idx ];
-                    this->pixel_array.get(x, y) = pixel;
-                }
-            }
-
-            this->dib_header = v.dib_header;
-            this->dib_header.bits_per_pixel = 32;
-            this->dib_header.image_size = this->pixel_array.save(nullptr);
-
-            this->file_header.id[ 0 ] = 'B';
-            this->file_header.id[ 1 ] = 'M';
-            this->file_header.data_offset = this->file_header.save(nullptr) + this->dib_header.save(nullptr);
-
-            this->file_header.size = this->save(nullptr);
-
-            return *this;
-        }
-
-        template < typename DibType >
-        bmp32& operator=(const bmp16< DibType >& v)
-        {
-            this->pixel_array.resize(v.dib_header.width, v.dib_header.height);
-            for (uint32_t x = 0; x < v.dib_header.width; ++x)
-            {
-                for (uint32_t y = 0; y < v.dib_header.height; ++y)
-                {
-                    this->pixel_array.get(x, y) = v.pixel_array.get(x, y);
-                }
-            }
-
-            this->dib_header = v.dib_header;
-            this->dib_header.bits_per_pixel = 32;
-            this->dib_header.image_size = this->pixel_array.save(nullptr);
-
-            this->file_header.id[ 0 ] = 'B';
-            this->file_header.id[ 1 ] = 'M';
-            this->file_header.data_offset = this->file_header.save(nullptr) + this->dib_header.save(nullptr);
-
-            this->file_header.size = this->save(nullptr);
-
-            return *this;
-        }
-
-        template < typename DibType >
-        bmp32& operator=(const bmp24< DibType >& v)
-        {
-            this->pixel_array.resize(v.dib_header.width, v.dib_header.height);
-            for (uint32_t x = 0; x < v.dib_header.width; ++x)
-            {
-                for (uint32_t y = 0; y < v.dib_header.height; ++y)
-                {
-                    this->pixel_array.get(x, y) = v.pixel_array.get(x, y);
-                }
-            }
-
-            this->dib_header = v.dib_header;
-            this->dib_header.bits_per_pixel = 32;
-            this->dib_header.image_size = this->pixel_array.save(nullptr);
-
-            this->file_header.id[ 0 ] = 'B';
-            this->file_header.id[ 1 ] = 'M';
-            this->file_header.data_offset = this->file_header.save(nullptr) + this->dib_header.save(nullptr);
-
-            this->file_header.size = this->save(nullptr);
-
-            return *this;
-        }
-
-        template < typename DibType >
-        bmp32& operator=(const bmp32< DibType >& v)
-        {
-            this->pixel_array.resize(v.dib_header.width, v.dib_header.height);
-            for (uint32_t x = 0; x < v.dib_header.width; ++x)
-            {
-                for (uint32_t y = 0; y < v.dib_header.height; ++y)
-                {
-                    this->pixel_array.get(x, y) = v.pixel_array.get(x, y);
+                    const auto px = get_pixel(v, x, y);
+                    this->pixel_array.get(x, y) = px;
                 }
             }
 
