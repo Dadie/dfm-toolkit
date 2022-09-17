@@ -1,11 +1,19 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 include(CheckIPOSupported)
 check_ipo_supported(RESULT lto_supported)
 
 # Project Information
 project (dfm-formatter VERSION 0.1.0 LANGUAGES CXX)
 
-find_package(docopt COMPONENTS CXX REQUIRED)
+include(FetchContent)
+FetchContent_GetProperties(docopt)
+if(NOT docopt_POPULATED)
+    FetchContent_Declare(
+      docopt
+      GIT_REPOSITORY https://github.com/docopt/docopt.cpp.git
+    )
+    FetchContent_MakeAvailable(docopt)
+endif()
 
 # Source
 set (SOURCES
@@ -16,7 +24,7 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
-target_link_libraries(${PROJECT_NAME} PUBLIC docopt_s)
+target_link_libraries(${PROJECT_NAME} PUBLIC docopt)
 target_link_libraries(${PROJECT_NAME} PUBLIC libdfm)
 
 # Set compiler options
