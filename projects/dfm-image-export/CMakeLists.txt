@@ -6,14 +6,11 @@ check_ipo_supported(RESULT lto_supported)
 project (dfm-image-export VERSION 0.1.0 LANGUAGES CXX)
 
 include(FetchContent)
-FetchContent_GetProperties(docopt)
-if(NOT docopt_POPULATED)
-    FetchContent_Declare(
-      docopt
-      GIT_REPOSITORY https://github.com/docopt/docopt.cpp.git
-    )
-    FetchContent_MakeAvailable(docopt)
-endif()
+FetchContent_Declare(
+  docopt
+  GIT_REPOSITORY https://github.com/docopt/docopt.cpp.git
+)
+FetchContent_MakeAvailable(docopt)
 
 # Source
 set (SOURCES
