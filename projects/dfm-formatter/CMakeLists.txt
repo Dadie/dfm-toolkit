@@ -9,6 +9,7 @@ include(FetchContent)
 FetchContent_Declare(
   docopt
   GIT_REPOSITORY https://github.com/docopt/docopt.cpp.git
+  GIT_TAG "origin/master"
 )
 FetchContent_MakeAvailable(docopt)
 
