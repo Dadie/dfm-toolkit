@@ -45,7 +45,7 @@ namespace dfm::utils
         {
             return __states[ pos ];
         }
-        std::bitset< N + 1 >::reference operator[](std::size_t pos)
+        typename std::bitset< N + 1 >::reference operator[](std::size_t pos)
         {
             return __states[ pos ];
         }

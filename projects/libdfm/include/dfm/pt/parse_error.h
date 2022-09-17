@@ -175,10 +175,9 @@ namespace dfm::pt
 }
 
 template < typename __FuncType, typename __TokenType, typename __PosType, typename __RuleType >
-constexpr void __TOKEN_RANGE_CHECK(
+void __TOKEN_RANGE_CHECK(
     const __FuncType& __FUNC, const __TokenType& __TOKENS, const __PosType& __POS, const __RuleType& __RULE)
 {
-    using namespace std::string_literals;
     if (__POS < __TOKENS.size())
     {
         return;
