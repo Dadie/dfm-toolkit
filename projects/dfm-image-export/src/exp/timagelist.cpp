@@ -133,17 +133,41 @@ void exp::timagelist(
         {
             merge = p1_bmp.get< dfm::utils::image::bmp2< dfm::utils::image::bitmap_info_header > >();
         }
+        else if (p1_bmp.has< dfm::utils::image::bmp1< dfm::utils::image::bitmap_info_header > >())
+        {
+            merge = p1_bmp.get< dfm::utils::image::bmp1< dfm::utils::image::bitmap_info_header > >();
+        }
+        else if (p1_bmp.has< dfm::utils::image::bmp24< dfm::utils::image::bitmap_core_header > >())
+        {
+            merge = p1_bmp.get< dfm::utils::image::bmp24< dfm::utils::image::bitmap_core_header > >();
+        }
+        else if (p1_bmp.has< dfm::utils::image::bmp8< dfm::utils::image::bitmap_core_header > >())
+        {
+            merge = p1_bmp.get< dfm::utils::image::bmp8< dfm::utils::image::bitmap_core_header > >();
+        }
+        else if (p1_bmp.has< dfm::utils::image::bmp4< dfm::utils::image::bitmap_core_header > >())
+        {
+            merge = p1_bmp.get< dfm::utils::image::bmp4< dfm::utils::image::bitmap_core_header > >();
+        }
+        else if (p1_bmp.has< dfm::utils::image::bmp1< dfm::utils::image::bitmap_core_header > >())
+        {
+            merge = p1_bmp.get< dfm::utils::image::bmp1< dfm::utils::image::bitmap_core_header > >();
+        }
         else
         {
             std::cout << "Unsupported in " << __FILE__ << ":" << __LINE__ << std::endl;
             assert(false);
         }
 
-        dfm::utils::image::bmp1< dfm::utils::image::bitmap_info_header > alpha_info;
+        dfm::utils::image::bmp1< dfm::utils::image::bitmap_v4_header > alpha_info;
         {
             if (p2_bmp.has< dfm::utils::image::bmp1< dfm::utils::image::bitmap_info_header > >())
             {
                 alpha_info = p2_bmp.get< dfm::utils::image::bmp1< dfm::utils::image::bitmap_info_header > >();
+            }
+            else if (p2_bmp.has< dfm::utils::image::bmp1< dfm::utils::image::bitmap_core_header > >())
+            {
+                alpha_info = p2_bmp.get< dfm::utils::image::bmp1< dfm::utils::image::bitmap_core_header > >();
             }
             else
             {
