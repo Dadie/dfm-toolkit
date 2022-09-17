@@ -74,7 +74,6 @@ set (SOURCES
     "src/dfm/ast/parse/helper.cpp"
 
     "src/dfm/utils/debug.cpp"
-    "src/dfm/utils/ci_compare.cpp"
     "src/dfm/utils/iconv.cpp"
     "src/dfm/utils/bits.cpp"
     "src/dfm/utils/io.cpp"
