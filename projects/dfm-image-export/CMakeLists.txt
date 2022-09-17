@@ -10,6 +10,7 @@ FetchContent_Declare(
   docopt
   GIT_REPOSITORY https://github.com/docopt/docopt.cpp.git
   GIT_TAG "origin/master"
+  SOURCE_DIR "${FETCHCONTENT_BASE_DIR}/docopt/docopt"
 )
 FetchContent_MakeAvailable(docopt)
 
@@ -24,7 +25,7 @@ set (SOURCES
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
-target_include_directories(${PROJECT_NAME} PRIVATE "${docopt_SOURCE_DIR}")
+target_include_directories(${PROJECT_NAME} PRIVATE "${FETCHCONTENT_BASE_DIR}/docopt")
 
 target_link_libraries(${PROJECT_NAME} PUBLIC docopt)
 target_link_libraries(${PROJECT_NAME} PUBLIC libdfm)
