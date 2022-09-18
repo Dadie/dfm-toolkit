@@ -26,6 +26,8 @@ namespace dfm::utils::form
         size_t save(uint8_t* p) const;
         void pp(std::ostream& out = std::cout) const;
         operator bool() const;
+
+        auto operator<=>(const dfm_timage_header&) const = default;
     };
 
     template < size_t Size >
@@ -61,6 +63,8 @@ namespace dfm::utils::form
             }
             return false;
         }
+
+        auto operator<=>(const dfm_generic_header&) const = default;
     };
 
     template < size_t Size >
@@ -85,6 +89,8 @@ namespace dfm::utils::form
                 std::cout << "generic_" << i << ": 0x" << std::hex << __data[ i ] << std::dec << std::endl;
             }
         }
+
+        auto operator<=>(const dfm_generic_data&) const = default;
     };
 
     struct __attribute__((__packed__)) dfm_timagelist_header
@@ -108,6 +114,8 @@ namespace dfm::utils::form
         size_t save(uint8_t* p) const;
         void pp(std::ostream& out = std::cout) const;
         operator bool() const;
+
+        auto operator<=>(const dfm_timagelist_header&) const = default;
     };
     static_assert(sizeof(dfm_timagelist_header) == 28, "Bad DFM Header Struct Size");
 
@@ -128,6 +136,8 @@ namespace dfm::utils::form
         size_t load(const uint8_t* p);
         size_t save(uint8_t* p) const;
         operator bool() const;
+
+        auto operator<=>(const dfm_timagelist_footer&) const = default;
     };
     static_assert(sizeof(dfm_timagelist_footer) == 22, "Bad DFM Footer Struct Size");
 

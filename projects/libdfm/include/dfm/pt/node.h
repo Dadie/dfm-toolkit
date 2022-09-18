@@ -87,5 +87,7 @@ namespace dfm::pt
         size_t offset() const noexcept;
         bool is_leaf() const noexcept;
         void pp(const size_t lvl = 0, std::ostream& ostr = std::cout) const noexcept;
+
+        auto operator<=>(const node&) const = default;
     };
 }
