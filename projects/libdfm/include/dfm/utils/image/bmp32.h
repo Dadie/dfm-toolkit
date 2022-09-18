@@ -29,6 +29,8 @@ namespace dfm::utils::image
         size_t load(const uint8_t* p);
         size_t save(uint8_t* p) const;
         void pp(std::ostream& out = std::cout) const;
+
+        auto operator<=>(const bitmap_file_header&) const = default;
     };
     static_assert(sizeof(bitmap_file_header) == 14, "Bad Struct Size");
 
@@ -43,6 +45,8 @@ namespace dfm::utils::image
         size_t load(const uint8_t* p);
         size_t save(uint8_t* p) const;
         void pp(std::ostream& out = std::cout) const;
+
+        auto operator<=>(const bitmap_core_header&) const = default;
     };
     static_assert(sizeof(bitmap_core_header) == 12, "Bad Struct Size");
 
@@ -63,6 +67,8 @@ namespace dfm::utils::image
         size_t load(const uint8_t* p);
         size_t save(uint8_t* p) const;
         void pp(std::ostream& out = std::cout) const;
+
+        auto operator<=>(const bitmap_info_header&) const = default;
     };
     static_assert(sizeof(bitmap_info_header) == 40, "Bad Struct Size");
 
@@ -96,6 +102,8 @@ namespace dfm::utils::image
         void pp(std::ostream& out = std::cout) const;
         bitmap_v4_header& operator=(const bitmap_core_header&);
         bitmap_v4_header& operator=(const bitmap_info_header&);
+
+        auto operator<=>(const bitmap_v4_header&) const = default;
     };
     static_assert(sizeof(bitmap_v4_header) == 108, "Bad Struct Size");
 
@@ -106,6 +114,8 @@ namespace dfm::utils::image
 
         size_t load(const uint8_t* p, const size_t position = 0);
         size_t save(uint8_t* p, const size_t position = 0) const;
+
+        auto operator<=>(const b1_pixel&) const = default;
     };
 
     struct __attribute__((__packed__)) b2_pixel
@@ -115,6 +125,8 @@ namespace dfm::utils::image
 
         size_t load(const uint8_t* p, const size_t position = 0);
         size_t save(uint8_t* p, const size_t position = 0) const;
+
+        auto operator<=>(const b2_pixel&) const = default;
     };
 
     struct __attribute__((__packed__)) b4_pixel
@@ -124,6 +136,8 @@ namespace dfm::utils::image
 
         size_t load(const uint8_t* p, const size_t position = 0);
         size_t save(uint8_t* p, const size_t position = 0) const;
+
+        auto operator<=>(const b4_pixel&) const = default;
     };
 
     struct __attribute__((__packed__)) b8_pixel
@@ -132,6 +146,8 @@ namespace dfm::utils::image
 
         size_t load(const uint8_t* p);
         size_t save(uint8_t* p) const;
+
+        auto operator<=>(const b8_pixel&) const = default;
     };
 
     struct __attribute__((__packed__)) b16_pixel
@@ -142,6 +158,8 @@ namespace dfm::utils::image
 
         size_t load(const uint8_t* p);
         size_t save(uint8_t* p) const;
+
+        auto operator<=>(const b16_pixel&) const = default;
     };
 
     struct __attribute__((__packed__)) b24_pixel
@@ -152,6 +170,8 @@ namespace dfm::utils::image
 
         size_t load(const uint8_t* p);
         size_t save(uint8_t* p) const;
+
+        auto operator<=>(const b24_pixel&) const = default;
     };
 
     struct __attribute__((__packed__)) b32_pixel
@@ -165,6 +185,8 @@ namespace dfm::utils::image
         size_t save(uint8_t* p) const;
         b32_pixel& operator=(const b24_pixel&);
         b32_pixel& operator=(const b16_pixel&);
+
+        auto operator<=>(const b32_pixel&) const = default;
     };
 
     template < typename PixelType >
@@ -203,6 +225,8 @@ namespace dfm::utils::image
             height = height_;
             pixel.resize(width * height);
         }
+
+        auto operator<=>(const bmp_basic_pixel_array&) const = default;
     };
 
     struct bmp32_pixel_array : public bmp_basic_pixel_array< b32_pixel >
@@ -210,6 +234,8 @@ namespace dfm::utils::image
         public:
         size_t load(const uint8_t* p);
         size_t save(uint8_t* p) const;
+
+        auto operator<=>(const bmp32_pixel_array&) const = default;
     };
 
     struct bmp24_pixel_array : public bmp_basic_pixel_array< b24_pixel >
@@ -217,6 +243,8 @@ namespace dfm::utils::image
         public:
         size_t load(const uint8_t* p);
         size_t save(uint8_t* p) const;
+
+        auto operator<=>(const bmp24_pixel_array&) const = default;
     };
 
     struct bmp16_pixel_array : public bmp_basic_pixel_array< b16_pixel >
@@ -224,6 +252,8 @@ namespace dfm::utils::image
         public:
         size_t load(const uint8_t* p);
         size_t save(uint8_t* p) const;
+
+        auto operator<=>(const bmp16_pixel_array&) const = default;
     };
 
     struct bmp8_pixel_array : public bmp_basic_pixel_array< b8_pixel >
@@ -231,6 +261,8 @@ namespace dfm::utils::image
         public:
         size_t load(const uint8_t* p);
         size_t save(uint8_t* p) const;
+
+        auto operator<=>(const bmp8_pixel_array&) const = default;
     };
 
     struct bmp4_pixel_array : public bmp_basic_pixel_array< b4_pixel >
@@ -238,6 +270,8 @@ namespace dfm::utils::image
         public:
         size_t load(const uint8_t* p);
         size_t save(uint8_t* p) const;
+
+        auto operator<=>(const bmp4_pixel_array&) const = default;
     };
 
     struct bmp2_pixel_array : public bmp_basic_pixel_array< b2_pixel >
@@ -245,6 +279,8 @@ namespace dfm::utils::image
         public:
         size_t load(const uint8_t* p);
         size_t save(uint8_t* p) const;
+
+        auto operator<=>(const bmp2_pixel_array&) const = default;
     };
 
     struct bmp1_pixel_array : public bmp_basic_pixel_array< b1_pixel >
@@ -252,6 +288,8 @@ namespace dfm::utils::image
         public:
         size_t load(const uint8_t* p);
         size_t save(uint8_t* p) const;
+
+        auto operator<=>(const bmp1_pixel_array&) const = default;
     };
 
     template < typename DibHeaderType, typename PixelType, typename PixelArrayType >
@@ -353,6 +391,8 @@ namespace dfm::utils::image
             }
             return images;
         }
+
+        auto operator<=>(const basic_bmp&) const = default;
     };
 
     template < typename DibHeaderType >
@@ -367,31 +407,38 @@ namespace dfm::utils::image
             this->pixel_array = v.pixel_array;
             return *this;
         }
+
+        auto operator<=>(const bmp1&) const = default;
     };
 
     template < typename DibHeaderType >
     struct bmp2 : public basic_bmp< DibHeaderType, b2_pixel, bmp2_pixel_array >
     {
+        auto operator<=>(const bmp2&) const = default;
     };
 
     template < typename DibHeaderType >
     struct bmp4 : public basic_bmp< DibHeaderType, b4_pixel, bmp4_pixel_array >
     {
+        auto operator<=>(const bmp4&) const = default;
     };
 
     template < typename DibHeaderType >
     struct bmp8 : public basic_bmp< DibHeaderType, b8_pixel, bmp8_pixel_array >
     {
+        auto operator<=>(const bmp8&) const = default;
     };
 
     template < typename DibHeaderType >
     struct bmp16 : public basic_bmp< DibHeaderType, b16_pixel, bmp16_pixel_array >
     {
+        auto operator<=>(const bmp16&) const = default;
     };
 
     template < typename DibHeaderType >
     struct bmp24 : public basic_bmp< DibHeaderType, b24_pixel, bmp24_pixel_array >
     {
+        auto operator<=>(const bmp24&) const = default;
     };
 
     template < typename DibHeaderType >
@@ -468,6 +515,8 @@ namespace dfm::utils::image
 
             return *this;
         }
+
+        auto operator<=>(const bmp32&) const = default;
     };
 
     struct bmp
@@ -515,6 +564,8 @@ namespace dfm::utils::image
 
         size_t load(const uint8_t* p);
         size_t save(uint8_t* p) const;
+
+        auto operator<=>(const bmp&) const = default;
     };
 
     enum class bitmap_compression_methods : uint32_t
@@ -552,6 +603,8 @@ namespace dfm::utils::image
         uint16_t bits_per_pixel {};
         bitmap_compression_methods compression {};
         bitmap_dib_type dib {};
+
+        auto operator<=>(const bitmap_analyse&) const = default;
     };
 
     bitmap_analyse analyse(const uint8_t* p);
