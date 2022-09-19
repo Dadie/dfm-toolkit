@@ -49,7 +49,7 @@ namespace dfm::utils::form
         {
             for (size_t i = 0; i < __data.size(); ++i)
             {
-                std::cout << "generic_" << i << ": 0x" << std::hex << __data[ i ] << std::dec << std::endl;
+                out << "generic_" << i << ": 0x" << std::hex << __data[ i ] << std::dec << std::endl;
             }
         }
         operator bool() const
@@ -86,7 +86,7 @@ namespace dfm::utils::form
         {
             for (size_t i = 0; i < __data.size(); ++i)
             {
-                std::cout << "generic_" << i << ": 0x" << std::hex << __data[ i ] << std::dec << std::endl;
+                out << "generic_" << i << ": 0x" << std::hex << __data[ i ] << std::dec << std::endl;
             }
         }
 
