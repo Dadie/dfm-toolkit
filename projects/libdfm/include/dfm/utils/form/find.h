@@ -25,15 +25,20 @@ namespace dfm::utils::form
         const dfm::ast::node_dfm& dfm, const std::vector< dfm::utils::ci_string >& names);
 
     template < typename... T >
-    std::vector< dfm::utils::form::find_match > find_type(const dfm::ast::node_dfm& dfm, T... types)
-    {
-        return find_types(dfm, { types... });
-    }
-
+    std::vector< dfm::utils::form::find_match > find_type(const dfm::ast::node_dfm& dfm, T... types);
     template < typename... T >
-    std::vector< dfm::utils::form::find_match > find_field(const dfm::ast::node_dfm& dfm, T... names)
-    {
-        return find_fields(dfm, { names... });
-    }
+    std::vector< dfm::utils::form::find_match > find_field(const dfm::ast::node_dfm& dfm, T... names);
 
+}
+
+template < typename... T >
+std::vector< dfm::utils::form::find_match > dfm::utils::form::find_type(const dfm::ast::node_dfm& dfm, T... types)
+{
+    return find_types(dfm, { types... });
+}
+
+template < typename... T >
+std::vector< dfm::utils::form::find_match > dfm::utils::form::find_field(const dfm::ast::node_dfm& dfm, T... names)
+{
+    return find_fields(dfm, { names... });
 }
