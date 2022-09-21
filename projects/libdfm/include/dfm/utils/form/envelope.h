@@ -35,34 +35,10 @@ namespace dfm::utils::form
     {
         std::array< uint8_t, Size > __data {};
 
-        size_t load(const uint8_t* p)
-        {
-            std::copy(p, p + __data.size(), __data.begin());
-            return __data.size();
-        }
-        size_t save(uint8_t* p) const
-        {
-            std::copy(__data.begin(), __data.end(), p);
-            return __data.size();
-        }
-        void pp(std::ostream& out = std::cout) const
-        {
-            for (size_t i = 0; i < __data.size(); ++i)
-            {
-                out << "generic_" << i << ": 0x" << std::hex << __data[ i ] << std::dec << std::endl;
-            }
-        }
-        operator bool() const
-        {
-            for (const auto& b : __data)
-            {
-                if (b != 0)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        size_t load(const uint8_t* p);
+        size_t save(uint8_t* p) const;
+        void pp(std::ostream& out = std::cout) const;
+        operator bool() const;
 
         auto operator<=>(const dfm_generic_header&) const = default;
     };
@@ -72,23 +48,9 @@ namespace dfm::utils::form
     {
         std::array< uint8_t, Size > __data {};
 
-        size_t load(const uint8_t* p)
-        {
-            std::copy(p, p + __data.size(), __data.begin());
-            return __data.size();
-        }
-        size_t save(uint8_t* p) const
-        {
-            std::copy(__data.begin(), __data.end(), p);
-            return __data.size();
-        }
-        void pp(std::ostream& out = std::cout) const
-        {
-            for (size_t i = 0; i < __data.size(); ++i)
-            {
-                out << "generic_" << i << ": 0x" << std::hex << __data[ i ] << std::dec << std::endl;
-            }
-        }
+        size_t load(const uint8_t* p);
+        size_t save(uint8_t* p) const;
+        void pp(std::ostream& out = std::cout) const;
 
         auto operator<=>(const dfm_generic_data&) const = default;
     };
@@ -141,4 +103,63 @@ namespace dfm::utils::form
     };
     static_assert(sizeof(dfm_timagelist_footer) == 22, "Bad DFM Footer Struct Size");
 
+}
+
+template < size_t Size >
+size_t dfm::utils::form::dfm_generic_header< Size >::load(const uint8_t* p)
+{
+    std::copy(p, p + __data.size(), __data.begin());
+    return __data.size();
+}
+
+template < size_t Size >
+size_t dfm::utils::form::dfm_generic_header< Size >::save(uint8_t* p) const
+{
+    std::copy(__data.begin(), __data.end(), p);
+    return __data.size();
+}
+
+template < size_t Size >
+void dfm::utils::form::dfm_generic_header< Size >::pp(std::ostream& out) const
+{
+    for (size_t i = 0; i < __data.size(); ++i)
+    {
+        out << "generic_" << i << ": 0x" << std::hex << __data[ i ] << std::dec << std::endl;
+    }
+}
+
+template < size_t Size >
+dfm::utils::form::dfm_generic_header< Size >::operator bool() const
+{
+    for (const auto& b : __data)
+    {
+        if (b != 0)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+template < size_t Size >
+size_t dfm::utils::form::dfm_generic_data< Size >::load(const uint8_t* p)
+{
+    std::copy(p, p + __data.size(), __data.begin());
+    return __data.size();
+}
+
+template < size_t Size >
+size_t dfm::utils::form::dfm_generic_data< Size >::save(uint8_t* p) const
+{
+    std::copy(__data.begin(), __data.end(), p);
+    return __data.size();
+}
+
+template < size_t Size >
+void dfm::utils::form::dfm_generic_data< Size >::pp(std::ostream& out) const
+{
+    for (size_t i = 0; i < __data.size(); ++i)
+    {
+        out << "generic_" << i << ": 0x" << std::hex << __data[ i ] << std::dec << std::endl;
+    }
 }

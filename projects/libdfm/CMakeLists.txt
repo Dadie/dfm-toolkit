@@ -12,6 +12,7 @@ set (SOURCES
 
     "src/dfm/pt/weed.cpp"
     "src/dfm/pt/node.cpp"
+    "src/dfm/pt/parse_error.cpp"
 
     "src/dfm/pt/parse/value_array_item.cpp"
     "src/dfm/pt/parse/value_array_item_param.cpp"
@@ -51,6 +52,7 @@ set (SOURCES
     "src/dfm/pt/parse/helper.cpp"
 
     "src/dfm/ast/load.cpp"
+    "src/dfm/ast/parse_error.cpp"
     "src/dfm/ast/node.cpp"
     "src/dfm/ast/node_dfm.cpp"
     "src/dfm/ast/node_object.cpp"

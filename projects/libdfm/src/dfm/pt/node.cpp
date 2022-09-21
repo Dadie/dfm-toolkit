@@ -14,6 +14,21 @@
 #include <dfm/pt/node.h>
 #include <dfm/pt/rule.h>
 
+dfm::pt::node& dfm::pt::node::operator[](const size_t pos)
+{
+    return children[ pos ];
+}
+
+const dfm::pt::node& dfm::pt::node::operator[](const size_t pos) const
+{
+    return children[ pos ];
+}
+
+size_t dfm::pt::node::size() const noexcept
+{
+    return children.size();
+}
+
 size_t dfm::pt::node::offset() const noexcept
 {
     size_t i = token.empty() ? 0 : 1;

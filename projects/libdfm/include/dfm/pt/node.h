@@ -70,20 +70,9 @@ namespace dfm::pt
         dfm::lexer::token_type token;
         std::vector< dfm::pt::node > children;
 
-        dfm::pt::node& operator[](size_t pos)
-        {
-            return children[ pos ];
-        }
-
-        const dfm::pt::node& operator[](size_t pos) const
-        {
-            return children[ pos ];
-        }
-
-        size_t size() const noexcept
-        {
-            return children.size();
-        }
+        dfm::pt::node& operator[](const size_t pos);
+        const dfm::pt::node& operator[](const size_t pos) const;
+        size_t size() const noexcept;
         size_t offset() const noexcept;
         bool is_leaf() const noexcept;
         void pp(const size_t lvl = 0, std::ostream& ostr = std::cout) const noexcept;
