@@ -7,7 +7,6 @@
 
 // Std
 #include <exception>
-#include <sstream>
 #include <stdexcept>
 #include <string>
 
@@ -23,42 +22,10 @@ namespace dfm::ast
 
         public:
         parse_error() = default;
-        parse_error(const dfm::pt::node& n)
-        {
-            std::stringstream strstr;
-            {
-                n.pp(0, strstr);
-            }
-            __what = strstr.str();
-        }
-
-        parse_error(const dfm::pt::node& n, const std::string& comment)
-        {
-            std::stringstream strstr;
-            {
-                strstr << " " << comment;
-                strstr << "\n";
-                n.pp(0, strstr);
-            }
-            __what = strstr.str();
-        }
-
-        parse_error(const dfm::pt::node& n, const std::string& comment, const size_t line)
-        {
-            std::stringstream strstr;
-            {
-                strstr << " " << comment;
-                strstr << " LINE:" << line;
-                strstr << "\n";
-                n.pp(0, strstr);
-            }
-            __what = strstr.str();
-        }
+        parse_error(const dfm::pt::node& n);
+        parse_error(const dfm::pt::node& n, const std::string& comment);
+        parse_error(const dfm::pt::node& n, const std::string& comment, const size_t line);
         virtual ~parse_error() override = default;
-        virtual const char* what() const noexcept override
-        {
-            return __what.c_str();
-        }
+        virtual const char* what() const noexcept override;
     };
-
 }

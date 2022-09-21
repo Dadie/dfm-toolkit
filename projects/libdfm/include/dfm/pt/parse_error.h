@@ -25,152 +25,38 @@ namespace dfm::pt
 
         public:
         parse_error() = default;
-        parse_error(const std::string& what)
-        {
-            __what = what;
-        }
-        parse_error(const std::vector< std::string >& whats)
-        {
-            for (const auto& what_ : whats)
-            {
-                __what += what_ + "\n";
-            }
-        }
-        parse_error(const dfm::pt::rule_type& rule, const dfm::lexer::token_type& got, const size_t at)
-        {
-            std::stringstream strstr;
-            {
-                strstr << "In '";
-                strstr << rule;
-                strstr << "' got the token '";
-                strstr << got;
-                strstr << "' at position '";
-                strstr << at;
-                strstr << "'";
-            }
-            __what = strstr.str();
-        }
+        parse_error(const std::string& what);
+        parse_error(const std::vector< std::string >& whats);
+        parse_error(const dfm::pt::rule_type& rule, const dfm::lexer::token_type& got, const size_t at);
         parse_error(const dfm::pt::rule_type& rule,
             const dfm::lexer::token_type& got,
             const size_t at,
-            const std::runtime_error& ex)
-        {
-            std::stringstream strstr;
-            {
-                strstr << "In '";
-                strstr << rule;
-                strstr << "' got the token '";
-                strstr << got;
-                strstr << "' at position '";
-                strstr << at;
-                strstr << "' and the exception ";
-                strstr << ex.what();
-            }
-            __what = strstr.str();
-        }
+            const std::runtime_error& ex);
         parse_error(const std::string& source,
             const dfm::pt::rule_type& rule,
             const dfm::lexer::token_type& got,
-            const size_t at)
-        {
-            std::stringstream strstr;
-            {
-                strstr << "In '";
-                strstr << rule;
-                strstr << "' got the token '";
-                strstr << got;
-                strstr << "' at position '";
-                strstr << at;
-                strstr << "' source: ";
-                strstr << source;
-            }
-            __what = strstr.str();
-        }
+            const size_t at);
         parse_error(const std::string& source,
             const dfm::pt::rule_type& rule,
             const dfm::lexer::token_type& got,
             const size_t at,
-            const dfm::lexer::token_type& expected)
-        {
-            std::stringstream strstr;
-            {
-                strstr << "In '";
-                strstr << rule;
-                strstr << "' got the token '";
-                strstr << got;
-                strstr << "' at position '";
-                strstr << at;
-                strstr << "' but expected token '";
-                strstr << expected;
-                strstr << "' source: ";
-                strstr << source;
-            }
-            __what = strstr.str();
-        }
+            const dfm::lexer::token_type& expected);
         parse_error(const dfm::pt::rule_type& rule,
             const dfm::lexer::token_type& got,
             const size_t at,
-            const dfm::lexer::token_type& expected)
-        {
-            std::stringstream strstr;
-            {
-                strstr << "In '";
-                strstr << rule;
-                strstr << "' got the token '";
-                strstr << got;
-                strstr << "' at position '";
-                strstr << at;
-                strstr << "' but expected token '";
-                strstr << expected;
-                strstr << "'";
-            }
-            __what = strstr.str();
-        }
+            const dfm::lexer::token_type& expected);
         parse_error(const std::string& source,
             const dfm::pt::rule_type& rule,
             const dfm::lexer::token_type& got,
             const size_t at,
-            const dfm::pt::node_type& expected_node)
-        {
-            std::stringstream strstr;
-            {
-                strstr << "In '";
-                strstr << rule;
-                strstr << "' got the token '";
-                strstr << got;
-                strstr << "' at position '";
-                strstr << at;
-                strstr << "' but expected node '";
-                strstr << expected_node;
-                strstr << "' source: ";
-                strstr << source;
-            }
-            __what = strstr.str();
-        }
+            const dfm::pt::node_type& expected_node);
         parse_error(const dfm::pt::rule_type& rule,
             const dfm::lexer::token_type& got,
             const size_t at,
-            const dfm::pt::node_type& expected_node)
-        {
-            std::stringstream strstr;
-            {
-                strstr << "In '";
-                strstr << rule;
-                strstr << "' got the token '";
-                strstr << got;
-                strstr << "' at position '";
-                strstr << at;
-                strstr << "' but expected node '";
-                strstr << expected_node;
-                strstr << "'";
-            }
-            __what = strstr.str();
-        }
+            const dfm::pt::node_type& expected_node);
         virtual ~parse_error() override = default;
-        virtual const char* what() const noexcept override
-        {
-            return __what.c_str();
-        }
+
+        virtual const char* what() const noexcept override;
     };
 }
 

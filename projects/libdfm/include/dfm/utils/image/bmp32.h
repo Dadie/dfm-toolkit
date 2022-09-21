@@ -198,33 +198,11 @@ namespace dfm::utils::image
         std::vector< PixelType > pixel {};
 
         public:
-        uint32_t w() const
-        {
-            return width;
-        }
-        uint32_t h() const
-        {
-            return height;
-        }
-
-        PixelType& get(const uint32_t x, const uint32_t y)
-        {
-            const size_t row = height - y - 1;
-            return pixel[ (row * width) + x ];
-        }
-
-        const PixelType& get(const uint32_t x, const uint32_t y) const
-        {
-            const size_t row = height - y - 1;
-            return pixel[ (row * width) + x ];
-        }
-
-        void resize(const uint32_t width_, const uint32_t height_)
-        {
-            width = width_;
-            height = height_;
-            pixel.resize(width * height);
-        }
+        uint32_t w() const;
+        uint32_t h() const;
+        PixelType& get(const uint32_t x, const uint32_t y);
+        const PixelType& get(const uint32_t x, const uint32_t y) const;
+        void resize(const uint32_t width_, const uint32_t height_);
 
         auto operator<=>(const bmp_basic_pixel_array&) const = default;
     };
@@ -305,92 +283,12 @@ namespace dfm::utils::image
         std::vector< b32_pixel > color_table;
         PixelArrayType pixel_array;
 
-        size_t load(const uint8_t* p)
-        {
-            assert(p != nullptr);
-            size_t s = 0;
-            {
-                s += file_header.load(p + s);
-                s += dib_header.load(p + s);
-
-                while (s + 4 <= file_header.data_offset)
-                {
-                    color_table.push_back({});
-                    s += color_table.back().load(p + s);
-                }
-
-                // Gap between color table and pixel array
-                assert(s <= file_header.data_offset);
-                if (s != file_header.data_offset)
-                {
-                    s = file_header.data_offset;
-                }
-
-                // Pixel array allocation
-                pixel_array.resize(dib_header.width, dib_header.height);
-
-                s += pixel_array.load(p + s);
-            }
-            return s;
-        }
-        size_t save(uint8_t* p) const
-        {
-            size_t s = 0;
-            {
-                s += file_header.save((p == nullptr ? p : (p + s)));
-                s += dib_header.save((p == nullptr ? p : (p + s)));
-                for (const auto& e : color_table)
-                {
-                    s += e.save((p == nullptr ? p : (p + s)));
-                }
-                assert(s <= file_header.data_offset);
-                s += dfm::utils::bits::pad2p(file_header.data_offset - s, (p == nullptr ? p : (p + s)));
-                s += pixel_array.save((p == nullptr ? p : (p + s)));
-            }
-            return s;
-        }
-        void resize(const uint32_t width, const uint32_t height)
-        {
-            dib_header.width = width;
-            dib_header.height = height;
-            pixel_array.resize(width, height);
-            dib_header.image_size = this->pixel_array.save(nullptr);
-        }
-
+        size_t load(const uint8_t* p);
+        size_t save(uint8_t* p) const;
+        void resize(const uint32_t width, const uint32_t height);
         basic_bmp sub(
-            const uint32_t offset_x, const uint32_t offset_y, const uint32_t width, const uint32_t height) const
-        {
-            auto cp = *this;
-            cp.resize(width, height);
-            for (uint32_t x = 0; x < width; ++x)
-            {
-                for (uint32_t y = 0; y < height; ++y)
-                {
-                    if (((x + offset_x) < dib_header.width) && ((y + offset_y) < dib_header.height))
-                    {
-                        cp.pixel_array.get(x, y) = this->pixel_array.get(x + offset_x, y + offset_y);
-                    }
-                }
-            }
-            return cp;
-        }
-
-        std::vector< basic_bmp > split(const uint32_t width, const uint32_t height) const
-        {
-            std::vector< basic_bmp > images;
-            {
-                const size_t rows = (dib_header.height / height);
-                const size_t cols = (dib_header.width / width);
-                for (size_t row = 0; row < rows; ++row)
-                {
-                    for (size_t col = 0; col < cols; ++col)
-                    {
-                        images.push_back(sub(col * width, row * height, width, height));
-                    }
-                }
-            }
-            return images;
-        }
+            const uint32_t offset_x, const uint32_t offset_y, const uint32_t width, const uint32_t height) const;
+        std::vector< basic_bmp > split(const uint32_t width, const uint32_t height) const;
 
         auto operator<=>(const basic_bmp&) const = default;
     };
@@ -446,75 +344,19 @@ namespace dfm::utils::image
     {
         private:
         template < typename BmpType >
-        b32_pixel get_pixel(const BmpType& v, const uint32_t x, const uint32_t y)
-        {
-            b32_pixel cl;
-            cl = v.pixel_array.get(x, y);
-            return cl;
-        }
-
+        b32_pixel get_pixel(const BmpType& v, const uint32_t x, const uint32_t y);
         template < typename DibType >
-        b32_pixel get_pixel(const bmp1< DibType >& v, const uint32_t x, const uint32_t y)
-        {
-            const auto clwhite = b32_pixel { .b = 0xff, .g = 0xff, .r = 0xff, .a = 0xff };
-            const auto clblack = b32_pixel { .b = 0x00, .g = 0x00, .r = 0x00, .a = 0x00 };
-            if (v.pixel_array.get(x, y).value)
-            {
-                return clwhite;
-            }
-            return clblack;
-        }
-
+        b32_pixel get_pixel(const bmp1< DibType >& v, const uint32_t x, const uint32_t y);
         template < typename DibType >
-        b32_pixel get_pixel(const bmp2< DibType >& v, const uint32_t x, const uint32_t y)
-        {
-            b32_pixel cl;
-            cl = v.color_table[ v.pixel_array.get(x, y).idx ];
-            return cl;
-        }
-
+        b32_pixel get_pixel(const bmp2< DibType >& v, const uint32_t x, const uint32_t y);
         template < typename DibType >
-        b32_pixel get_pixel(const bmp4< DibType >& v, const uint32_t x, const uint32_t y)
-        {
-            b32_pixel cl;
-            cl = v.color_table[ v.pixel_array.get(x, y).idx ];
-            return cl;
-        }
-
+        b32_pixel get_pixel(const bmp4< DibType >& v, const uint32_t x, const uint32_t y);
         template < typename DibType >
-        b32_pixel get_pixel(const bmp8< DibType >& v, const uint32_t x, const uint32_t y)
-        {
-            b32_pixel cl;
-            cl = v.color_table[ v.pixel_array.get(x, y).idx ];
-            return cl;
-        }
+        b32_pixel get_pixel(const bmp8< DibType >& v, const uint32_t x, const uint32_t y);
 
         public:
         template < typename BmpType >
-        bmp32& operator=(const BmpType& v)
-        {
-            this->pixel_array.resize(v.dib_header.width, v.dib_header.height);
-            for (uint32_t x = 0; x < v.dib_header.width; ++x)
-            {
-                for (uint32_t y = 0; y < v.dib_header.height; ++y)
-                {
-                    const auto px = get_pixel(v, x, y);
-                    this->pixel_array.get(x, y) = px;
-                }
-            }
-
-            this->dib_header = v.dib_header;
-            this->dib_header.bits_per_pixel = 32;
-            this->dib_header.image_size = this->pixel_array.save(nullptr);
-
-            this->file_header.id[ 0 ] = 'B';
-            this->file_header.id[ 1 ] = 'M';
-            this->file_header.data_offset = this->file_header.save(nullptr) + this->dib_header.save(nullptr);
-
-            this->file_header.size = this->save(nullptr);
-
-            return *this;
-        }
+        bmp32& operator=(const BmpType& v);
 
         auto operator<=>(const bmp32&) const = default;
     };
@@ -608,4 +450,216 @@ namespace dfm::utils::image
     };
 
     bitmap_analyse analyse(const uint8_t* p);
+}
+
+template < typename PixelType >
+uint32_t dfm::utils::image::bmp_basic_pixel_array< PixelType >::w() const
+{
+    return width;
+}
+
+template < typename PixelType >
+uint32_t dfm::utils::image::bmp_basic_pixel_array< PixelType >::h() const
+{
+    return height;
+}
+
+template < typename PixelType >
+PixelType& dfm::utils::image::bmp_basic_pixel_array< PixelType >::get(const uint32_t x, const uint32_t y)
+{
+    const size_t row = height - y - 1;
+    return pixel[ (row * width) + x ];
+}
+
+template < typename PixelType >
+const PixelType& dfm::utils::image::bmp_basic_pixel_array< PixelType >::get(const uint32_t x, const uint32_t y) const
+{
+    const size_t row = height - y - 1;
+    return pixel[ (row * width) + x ];
+}
+
+template < typename PixelType >
+void dfm::utils::image::bmp_basic_pixel_array< PixelType >::resize(const uint32_t width_, const uint32_t height_)
+{
+    width = width_;
+    height = height_;
+    pixel.resize(width * height);
+}
+
+template < typename DibHeaderType, typename PixelType, typename PixelArrayType >
+size_t dfm::utils::image::basic_bmp< DibHeaderType, PixelType, PixelArrayType >::load(const uint8_t* p)
+{
+    assert(p != nullptr);
+    size_t s = 0;
+    {
+        s += file_header.load(p + s);
+        s += dib_header.load(p + s);
+
+        while (s + 4 <= file_header.data_offset)
+        {
+            color_table.push_back({});
+            s += color_table.back().load(p + s);
+        }
+
+        // Gap between color table and pixel array
+        assert(s <= file_header.data_offset);
+        if (s != file_header.data_offset)
+        {
+            s = file_header.data_offset;
+        }
+
+        // Pixel array allocation
+        pixel_array.resize(dib_header.width, dib_header.height);
+
+        s += pixel_array.load(p + s);
+    }
+    return s;
+}
+
+template < typename DibHeaderType, typename PixelType, typename PixelArrayType >
+size_t dfm::utils::image::basic_bmp< DibHeaderType, PixelType, PixelArrayType >::save(uint8_t* p) const
+{
+    size_t s = 0;
+    {
+        s += file_header.save((p == nullptr ? p : (p + s)));
+        s += dib_header.save((p == nullptr ? p : (p + s)));
+        for (const auto& e : color_table)
+        {
+            s += e.save((p == nullptr ? p : (p + s)));
+        }
+        assert(s <= file_header.data_offset);
+        s += dfm::utils::bits::pad2p(file_header.data_offset - s, (p == nullptr ? p : (p + s)));
+        s += pixel_array.save((p == nullptr ? p : (p + s)));
+    }
+    return s;
+}
+
+template < typename DibHeaderType, typename PixelType, typename PixelArrayType >
+void dfm::utils::image::basic_bmp< DibHeaderType, PixelType, PixelArrayType >::resize(
+    const uint32_t width, const uint32_t height)
+{
+    dib_header.width = width;
+    dib_header.height = height;
+    pixel_array.resize(width, height);
+    dib_header.image_size = this->pixel_array.save(nullptr);
+}
+
+template < typename DibHeaderType, typename PixelType, typename PixelArrayType >
+dfm::utils::image::basic_bmp< DibHeaderType, PixelType, PixelArrayType > dfm::utils::image::
+    basic_bmp< DibHeaderType, PixelType, PixelArrayType >::sub(
+        const uint32_t offset_x, const uint32_t offset_y, const uint32_t width, const uint32_t height) const
+{
+    auto cp = *this;
+    cp.resize(width, height);
+    for (uint32_t x = 0; x < width; ++x)
+    {
+        for (uint32_t y = 0; y < height; ++y)
+        {
+            if (((x + offset_x) < dib_header.width) && ((y + offset_y) < dib_header.height))
+            {
+                cp.pixel_array.get(x, y) = this->pixel_array.get(x + offset_x, y + offset_y);
+            }
+        }
+    }
+    return cp;
+}
+
+template < typename DibHeaderType, typename PixelType, typename PixelArrayType >
+std::vector< dfm::utils::image::basic_bmp< DibHeaderType, PixelType, PixelArrayType > > dfm::utils::image::
+    basic_bmp< DibHeaderType, PixelType, PixelArrayType >::split(const uint32_t width, const uint32_t height) const
+{
+    std::vector< dfm::utils::image::basic_bmp< DibHeaderType, PixelType, PixelArrayType > > images;
+    {
+        const size_t rows = (dib_header.height / height);
+        const size_t cols = (dib_header.width / width);
+        for (size_t row = 0; row < rows; ++row)
+        {
+            for (size_t col = 0; col < cols; ++col)
+            {
+                images.push_back(sub(col * width, row * height, width, height));
+            }
+        }
+    }
+    return images;
+}
+
+template < typename DibHeaderType >
+template < typename BmpType >
+dfm::utils::image::b32_pixel dfm::utils::image::bmp32< DibHeaderType >::get_pixel(
+    const BmpType& v, const uint32_t x, const uint32_t y)
+{
+    b32_pixel cl;
+    cl = v.pixel_array.get(x, y);
+    return cl;
+}
+
+template < typename DibHeaderType >
+template < typename DibType >
+dfm::utils::image::b32_pixel dfm::utils::image::bmp32< DibHeaderType >::get_pixel(
+    const dfm::utils::image::bmp1< DibType >& v, const uint32_t x, const uint32_t y)
+{
+    const auto clwhite = b32_pixel { .b = 0xff, .g = 0xff, .r = 0xff, .a = 0xff };
+    const auto clblack = b32_pixel { .b = 0x00, .g = 0x00, .r = 0x00, .a = 0x00 };
+    if (v.pixel_array.get(x, y).value)
+    {
+        return clwhite;
+    }
+    return clblack;
+}
+
+template < typename DibHeaderType >
+template < typename DibType >
+dfm::utils::image::b32_pixel dfm::utils::image::bmp32< DibHeaderType >::get_pixel(
+    const dfm::utils::image::bmp2< DibType >& v, const uint32_t x, const uint32_t y)
+{
+    b32_pixel cl;
+    cl = v.color_table[ v.pixel_array.get(x, y).idx ];
+    return cl;
+}
+
+template < typename DibHeaderType >
+template < typename DibType >
+dfm::utils::image::b32_pixel dfm::utils::image::bmp32< DibHeaderType >::get_pixel(
+    const dfm::utils::image::bmp4< DibType >& v, const uint32_t x, const uint32_t y)
+{
+    b32_pixel cl;
+    cl = v.color_table[ v.pixel_array.get(x, y).idx ];
+    return cl;
+}
+
+template < typename DibHeaderType >
+template < typename DibType >
+dfm::utils::image::b32_pixel dfm::utils::image::bmp32< DibHeaderType >::get_pixel(
+    const dfm::utils::image::bmp8< DibType >& v, const uint32_t x, const uint32_t y)
+{
+    dfm::utils::image::b32_pixel cl;
+    cl = v.color_table[ v.pixel_array.get(x, y).idx ];
+    return cl;
+}
+
+template < typename DibHeaderType >
+template < typename BmpType >
+dfm::utils::image::bmp32< DibHeaderType >& dfm::utils::image::bmp32< DibHeaderType >::operator=(const BmpType& v)
+{
+    this->pixel_array.resize(v.dib_header.width, v.dib_header.height);
+    for (uint32_t x = 0; x < v.dib_header.width; ++x)
+    {
+        for (uint32_t y = 0; y < v.dib_header.height; ++y)
+        {
+            const auto px = get_pixel(v, x, y);
+            this->pixel_array.get(x, y) = px;
+        }
+    }
+
+    this->dib_header = v.dib_header;
+    this->dib_header.bits_per_pixel = 32;
+    this->dib_header.image_size = this->pixel_array.save(nullptr);
+
+    this->file_header.id[ 0 ] = 'B';
+    this->file_header.id[ 1 ] = 'M';
+    this->file_header.data_offset = this->file_header.save(nullptr) + this->dib_header.save(nullptr);
+
+    this->file_header.size = this->save(nullptr);
+
+    return *this;
 }
