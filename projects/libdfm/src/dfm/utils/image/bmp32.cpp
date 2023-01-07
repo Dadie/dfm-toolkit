@@ -5,6 +5,7 @@
 // Ext
 
 // Std
+#include <algorithm>
 #include <cassert>
 #include <cstddef>
 #include <cstdint>

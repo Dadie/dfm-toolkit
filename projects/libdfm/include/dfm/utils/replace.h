@@ -44,7 +44,7 @@ std::basic_string< CharT, Traits, Allocator > dfm::utils::replace_all(
     return out;
 }
 
-template < typename CharT, typename Traits = std::char_traits< CharT >, typename Allocator = std::allocator< CharT > >
+template < typename CharT, typename Traits, typename Allocator >
 std::basic_string< CharT, Traits, Allocator > dfm::utils::replace_all(
     const std::basic_string< CharT, Traits, Allocator >& str,
     const std::basic_string< CharT, Traits >& needle,
