@@ -18,16 +18,8 @@
 namespace dfm::lexer
 {
     std::vector< dfm::lexer::token_type > weed(
-        const std::vector< dfm::lexer::token_type >& tokens, const bool remove_comments)
+        const std::vector< dfm::lexer::token_type >& tokens, const dfm::lexer::weed_cfg& cfg)
     {
-        const struct
-        {
-            bool remove_empty_tokens = true;
-            bool remove_horizontal_whitespace = true;
-            bool normalize_newline = true;
-            bool remove_adjacent_newline = true;
-            bool remove_trailing_newline = true;
-        } cfg;
 
         std::vector< dfm::lexer::token_type > wtokens { tokens.begin(), tokens.end() };
 
@@ -81,7 +73,7 @@ namespace dfm::lexer
 
         // Remove comments
         {
-            if (remove_comments)
+            if (cfg.remove_comments)
             {
                 const auto comment_prefix = dfm::lexer::token::SLASH + dfm::lexer::token::SLASH;
                 std::erase_if(wtokens, [ & ](const auto t) { return t.starts_with(comment_prefix); });
