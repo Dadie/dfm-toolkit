@@ -8,6 +8,8 @@ The DFM Toolkit consists of
   > A Tool to normalize the formatting of a DFM File
 - DFM Find
   > A Tool to search for certain parameters, names or types in a DFM File
+- DFM Tokens
+  > A Tool to tokenize a DFM File. Tokens are returns as a JSON Array.
 - libdfm
   > The core library to parse and process DFM files
 
@@ -49,7 +51,7 @@ cmake --build .
 
 The DFM Toolkit requires a `C++` compiler supporting at least `C++20` e.g. `clang 11` and uses `CMake`.
 
-While the `libdfm` has no further dependencies, the applications depend also on [`docopt.cpp`](https://github.com/docopt/docopt.cpp).
+While the `libdfm` has no further dependencies, the applications depend also on [`docopt.cpp`](https://github.com/docopt/docopt.cpp) and some on [`nlohmann::json`](https://github.com/nlohmann/json).
 
 For the usage of each application in the toolkit see the `USAGE` string in the `$app.main.cpp` or call the application with the `--help` argument.
 
